@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{#{% block title %}爬虫组{% endblock %}#}
+{% block body_attribs %}
+{% endblock %}
+{% block head %}
+{{ super() }}
+    <link href="{{ url_for('static', filename='css/mycss/dishonest.css') }}" type="text/css" rel="stylesheet">
+{% endblock %}
+{% block page_content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <form id="searchForm" class="my-form form-horizontal" action="{{ url_for('credit_report') }}" method=post>
+                    <p style="padding: 10px 0px 10px 20px;color: #f1f3f5">
+                        <strong><span style="font-size: 30px;color: #1abc9c">征信</span>报告</strong>
+                    </p>
+                    <div class="my-input">
+                        <div class="form-group">
+                            <label for="name" class="col-sm-4 control-label">用户名</label>
+                            <div class="col-sm-6">
+                                <input type="text" class=" form-control" id="name" name="name" value="测试: luoyong2017" required>
+                            </div>
+                            <div class="col-sm-2">
+                                <span style="color: red">*</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="card_num" class="col-sm-4 control-label"> 登陆密码 </label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="passwoed" name="password" value="测试: credit2017" required>
+                            </div>
+                            <div class="col-sm-2">
+                                 <span style="color: red">*</span>
+                            </div>
+                        </div>
+                         <div class="form-group">
+                            <label for="card_num" class="col-sm-4 control-label"> 身份验证码 </label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="auth_code" name="auth_code" value="测试: sj47bm" required>
+                            </div>
+                             <div class="col-sm-2">
+                                 <span style="color: red">*</span>
+                             </div>
+                         </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-4 col-sm-6" style="margin-bottom: 30px">
+                                <input type="submit"  value="查询" class="btn btn-primary btn-block">
+{#                                <a role="button" class="btn btn-primary btn-block" id="checkButton"> 查询 </a>#}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div id="result" style="margin-top: 80px">
+            </div>
+        </div>
+    </div>
+{% endblock %}

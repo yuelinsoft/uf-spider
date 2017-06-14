@@ -1,0 +1,26 @@
+<table class="table table-hover">
+    <thread >
+        <tr>
+            <th>被执行人姓名/名称</th>
+            <th >身份证号码/组织机构代码</th>
+            <th >案号</th>
+            <th >时间</th>
+            <th >法院</th>
+            <th >金额</th>
+          </tr>
+    </thread>
+ <tbody>
+ {% for d in DishonestPeople %}
+    <tr style="font-size: 16px">
+        <td bgcolor="#FFFFFF">{{ d.name }}</td>
+        <td bgcolor="#FFFFFF">{{ d.card_num }}</td>
+        <td bgcolor="#FFFFFF">{{ d.case_code }}</td>
+        <td bgcolor="#FFFFFF">{{ d.reg_date }}</td>
+        <td bgcolor="#FFFFFF">{{ d.court_name }}</td>
+        <td bgcolor="#FFFFFF">{{ d.execute_money }}</td>
+    </tr>
+ {% endfor %}
+
+   </tbody>
+ </table>
+

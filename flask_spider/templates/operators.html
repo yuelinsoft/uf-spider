@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{#{% block title %}爬虫组{% endblock %}#}
+{% block body_attribs %}
+{% endblock %}
+{% block head %}
+    <link href="{{ url_for('static', filename='css/mycss/dishonest.css') }}" type="text/css" rel="stylesheet">
+{{ super() }}
+{% endblock %}
+{% block page_content %}
+    <div class="container">
+    <div class="row">
+        <div class="col-md-6 col-lg-offset-3">
+            <form class="my-form form-horizontal" id="searchForm" >
+                <p style="padding: 10px 0px 10px 20px;color: #f1f3f5"> <strong><span style="font-size: 30px;color: #1abc9c">运</span>营商查询 </strong></p>
+                <div class="my-input">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">手机号:</label>
+                    <div class="col-sm-7">
+                        <input type="text" id='content' name="content" class="form-control"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">密码:</label>
+                    <div class="col-sm-7">
+                    <input type="password" id="password" name="password" class="form-control"/></div>
+                </div>
+                <div class="form-group" id="vcode-div">
+                    <label class="col-sm-3 control-label" id="vcode-label">动态密码: </label>
+                    <div class="col-sm-4">
+						<input type="text" id="vcode" name="vcode" class="form-control"/>
+					</div>
+                    <div style="display: inline-block;margin-left: 20px">
+                        <a role="button" class="btn btn-inverse " id="get-dynamic-passwd" > 点击获取 </a>
+                    </div>
+				</div>
+                <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-7" style="margin-bottom: 30px">
+                    <a role="button" class="btn btn-primary btn-block" id="searchButton" > 查询 </a>
+                </div>
+                </div>
+                </div>
+            </form>
+            <div id="checkNumber">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div id="result" class="col-md-10 col-lg-offset-1">
+        </div>
+    </div>
+    </div>
+
+    <script>
+    $(document).ready(function() {
+        var NumberType = 1; // 手机号运营商的类型 1 联通 2...
+
+
+        //监听点击获取动态验证码的函数
+        $("#get-dynamic-passwd").click(function () {
+            $.get("/get_vcode", function (data, status) {
+                $("#checkNumber").empty();
+                $("#checkNumber").append('<p style="text-align: center;margin-top: 20px;">' + data + '</p>');
+            })
+        });
+
+
+        //当用户离开输入框的时候发送请求查询手机号类型
+        $("#content").change(function () {
+            try {
+                var x = $("#content").val();
+                if(x == "") throw "请输入手机号";
+                if(isNaN(x)) throw "输入错误，请输入数字";
+                if(x.length != 11) throw "手机号位数有误,请重新输入";
+            }
+            catch (err) {
+                 $("#content").attr('style', 'border-style: solid;border-color:red;');
+                 $("#checkNumber").append('<p style="text-align: center;margin-top: 20px;">'+err+'</p>');
+                 return;
+            }
+            $("#searchButton").attr('disabled', true);
+            $.get('/check_phone_number/'+$("#content").val(), function (data, status) {
+                var fdStart = data.indexOf("&");
+                $("#searchButton").attr('disabled', false);
+                if(fdStart === -1) {
+                    data = JSON.parse(data);
+                    {#                alert(typeof data.company);#}
+                    if (data.company === 1) {
+                        // $("#vcode-label").empty();
+                        // $("#vcode-father").remove();
+                        $("#vcode").attr("disabled", true);
+                        $("#get-dynamic-passwd").attr("disabled", true);
+                        $("#checkNumber").empty();
+                        $("#checkNumber").append('<p style="text-align: center;margin-top: 20px;">' +
+                                '欢迎您，' + data.province + data.city + '联通用户' + $("#content").val() + '！！</p>');
+                    }
+                    else if (data.company === 2) {
+                        // $("#vcode-label").empty();
+                        // $("#vcode-father").remove();
+                        // $("#vcode-label").append('验证码:');
+                        // $("#vcode-div").append('<div class="col-sm-8" id="vcode-father"><input type="password"id="vcode" name="vcode" class="form-control"/></div>');
+                        $("#vcode").attr("disabled", false);
+                        $("#get-dynamic-passwd").attr("disabled", false);
+                        $("#checkNumber").empty();
+                        $("#checkNumber").append('<p style="text-align: center;margin-top: 20px;">欢迎您，移动用户' + $("#content").val() + '！！</p>');
+                    }
+                    else if (data.company === 3) {
+                        // $("#vcode-label").empty();
+                        //   $("#vcode-father").remove();
+                        $("#checkNumber").empty();
+                        $("#checkNumber").append('<p style="text-align: center;margin-top: 20px;">欢迎您，电信用户' + $("#content").val() + '！！</p>');
+                        $("#vcode").attr("disabled", false);
+                        $("#get-dynamic-passwd").attr("disabled", false);
+                    }
+                    else {
+                        $("#vcode").attr("disabled", true);
+                        $("#get-dynamic-passwd").attr("disabled", true);
+                        $("#checkNumber").empty();
+                        $("#checkNumber").append('<p style="text-align: center;margin-top: 20px;">号码' + $("#content").val() + '有误，请确认后重新输入！！</p>');
+                    }
+                }
+                else {
+                      $("#checkNumber").empty();
+                      $("#checkNumber").append('<p style="text-align: center;margin-top: 20px;">' + data.substring(1) + '</p>');
+                }
+            })
+        })
+
+
+        //监听查询按钮的函数
+        $("#searchButton").click(function () {
+            if($("#content").val()&&$("#password").val()){
+            $("#searchButton").attr("disabled", true);
+                if(NumberType === 1){
+                    $.get('/get_data_union/'+$("#content").val()+'/'+$("#password").val(), function (data, status) {
+                        var dataStart = data.indexOf("&");
+                        if(dataStart === 0){
+                            //服务端返回error
+                            alert(data.substring(1));
+                        }
+                        else {
+                            //查询成功
+                            $("#result").html(data);
+                        }
+                        $("#searchButton").attr("disabled", false);
+                    })
+                }
+                else {
+                    $.get('/get_data_mobile/'+$("#content").val()+'/'+$("#password").val()+'/'+$("#vcode").val(), function (data, status) {
+                        var dataStart = data.indexOf("&");
+                        if(dataStart === 0){
+                            //服务端返回error
+                            alert(data);
+                        }
+                        else {
+                            //查询成功
+                            $("#result").html(data);
+                        }
+                        $("#searchButton").attr("disabled", false);
+                    })
+                }
+            }
+            else {
+                if(!$("#content").val())
+                    $("#content").attr('style', 'border-style: solid;border-color:red;');
+                if(!$("#password").val())
+                    $("#password").attr('style', 'border-style: solid;border-color:red;');
+            }
+        })
+
+    })
+
+    </script>
+{% endblock %}

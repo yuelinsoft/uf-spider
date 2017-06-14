@@ -1,0 +1,11 @@
+# 目录说明
+/: git的主目录
+
+/EnterpriseCreditCrawler：企业信用 - for分布式
+/SearchEngines：好搜 - for分布式
+
+/zhixing_spider：被执行人 - for分布式
+/shixin_spdier：失信被执行人 - for分布式
+
+/flask_spider: 爬虫组官网的demo代码 - for 后台
+/spider： 莫艺华的全部爬虫代码 - for 后台
